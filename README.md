@@ -1,7 +1,7 @@
 # NewCoderCourseOfAlgorithm
 牛客网算法课程专题练习题
 #### Chapter1
-###### TreePrinter
+###### [TreePrinter](https://github.com/AlphaGao1993/NewCoderCourseOfAlgorithm/blob/master/src/Chapter1/TreePrinter.java)
 - public int[][] printTree(TreeNode root)
     + 按层遍历二叉树并按层输出
 - public static String getTreeStr(TreeNode root)
