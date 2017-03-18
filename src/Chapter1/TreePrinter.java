@@ -76,8 +76,8 @@ public class TreePrinter {
     }
 
     /**
-     * 先序遍历二叉树(递归)
      *
+     *先序遍历二叉树(递归)
      * @param root 根节点
      * @return 先序遍历合成的字符串
      */
@@ -108,7 +108,7 @@ public class TreePrinter {
     }
 
     /**
-     * 后遍历二叉树(递归)
+     * 后序遍历二叉树(递归)
      *
      * @param root 根节点
      * @return 先序遍历合成的字符串
