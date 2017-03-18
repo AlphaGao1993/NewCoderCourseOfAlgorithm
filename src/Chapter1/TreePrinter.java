@@ -1,9 +1,6 @@
 package Chapter1;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Stack;
+import java.util.*;
 
 /**
  * Created by Alpha on 2017/3/17.
@@ -21,7 +18,7 @@ public class TreePrinter {
      * @param root 二叉树根节点
      * @return
      */
-    public int[][] printTree(TreeNode root) {
+    private static int[][] printTree(TreeNode root) {
         if (root == null) {
             return null;
         }
@@ -62,22 +59,9 @@ public class TreePrinter {
 
     private static List<String> str1;
 
-    public static String getTreeStr(TreeNode root) {
-        str1 = new ArrayList<>();
-        //printTreeByPreOrderWithRecur(root);
-        //printTreeByInOrderWithRecur(root);
-        //printTreeByPostOrderWithRecur(root);
-        printTreeByPreOrderWithStack(root);
-        StringBuilder str = new StringBuilder();
-        for (String s : str1) {
-            str.append(s);
-        }
-        return str.toString();
-    }
-
     /**
+     * 先序遍历二叉树(递归)
      *
-     *先序遍历二叉树(递归)
      * @param root 根节点
      * @return 先序遍历合成的字符串
      */
@@ -124,6 +108,7 @@ public class TreePrinter {
     }
 
     /**
+     * 先序遍历
      * 维护一个栈，不断的压入节点的左子树，直到左子树为空。然后继续访问栈顶节点的右子树并出栈
      *
      * @param root 根节点
@@ -143,6 +128,69 @@ public class TreePrinter {
         str1.add("#!");//最后一个出栈的节点是最后一个节点，因为其右节点为空，同时栈内已经没有元素，所以无法访问，手动添加结束
     }
 
+    /**
+     * 中序遍历
+     * 维护一个栈，不断的压入节点的左子树，直到左子树为空。然后继续访问栈顶节点，再访问该节点的右节点
+     *
+     * @param root 根节点
+     */
+    private static void printTreeByInOrderWithStack(TreeNode root) {
+        Stack<TreeNode> stack = new Stack<>();
+        while (root != null || !stack.isEmpty()) {//只要节点不为空或者栈不为空
+            while (root != null) {//当前节点不为空，访问并入栈
+                stack.push(root);
+                root = root.left;//继续访问左节点
+            }
+            str1.add("#!");//表示左节点为空
+            root = stack.pop();//访问栈中的顶部节点，并出栈
+            str1.add(root.val + "!");//访问父节点
+            root = root.right;
+        }
+        str1.add("#!");//最后一个出栈的节点是最后一个节点，因为其右节点为空，同时栈内已经没有元素，所以无法访问，手动添加结束
+    }
+
+    /**
+     * 后序遍历
+     * 维护一个栈，不断的压入某节点下的所有左子树，直到左子树为空;然后切换到右子树再重复此过程
+     * 当一个节点的左右子树都为空，则输出该节点
+     *
+     * @param root 根节点
+     */
+    private static void printTreeByPostOrderWithStack(TreeNode root) {
+        Stack<TreeNode> stack = new Stack<>();
+        Map<TreeNode, Boolean> flags = new HashMap<>();//存储节点是否已经被访问过
+        stack.push(root);
+        while (!stack.isEmpty()) {//只要栈不为空
+            TreeNode temp = stack.peek();//只访问栈顶元素，不出栈
+            if (temp.left != null && !flags.containsKey(temp.left)) {//若存在左节点并且没有被访问过
+                temp = temp.left;
+                while (temp != null) {
+                    if (flags.containsKey(temp)) {
+                        break;//如果该节点已经被访问过，就跳过
+                    } else {
+                        stack.push(temp);//否则就入栈（入栈的都是没有被访问过的元素）
+                    }
+                    temp = temp.left;
+                }
+                continue;//确保先把所有左节点压入栈内
+            }
+            if (temp.right != null && !flags.containsKey(temp.right)) {
+                stack.push(temp.right);
+                continue;
+            }
+            TreeNode node = stack.pop();//此时该子树下的所有子节点都已经入栈
+            flags.put(node, true);//记录已经被访问
+            //出栈节点都是第一次被打印，所以在这里判断是否有子节点并加入标记，防止重复加入标记
+            if (node.left == null) {
+                str1.add("#!");
+            }
+            if (node.right == null) {
+                str1.add("#!");
+            }
+            str1.add(node.val + "!");//输出
+        }
+    }
+
     private static TreeNode getTreeRoot() {
         TreeNode node = new TreeNode(1);
         node.left = new TreeNode(2);
@@ -154,7 +202,31 @@ public class TreePrinter {
         return node;
     }
 
+    public static String getTreeStr(TreeNode root) {
+        str1 = new ArrayList<>();
+        //printTree(root);
+        //printTreeByPreOrderWithRecur(root);
+        //printTreeByInOrderWithRecur(root);
+        //printTreeByPostOrderWithRecur(root);
+        //printTreeByPreOrderWithStack(root);
+        //printTreeByInOrderWithStack(root);
+        printTreeByPostOrderWithStack(root);
+        StringBuilder str = new StringBuilder();
+        for (String s : str1) {
+            str.append(s);
+        }
+        return str.toString();
+    }
+
     public static void main(String[] args) {
+        int[][] ints = printTree(getTreeRoot());
+        for (int i = 0; i < ints.length; i++) {
+            for (int j=0;j<ints[i].length;j++) {
+                System.out.print(ints[i][j] + " ");
+            }
+            System.out.println();
+        }
+
         String treeStr = getTreeStr(getTreeRoot());
         System.out.println(treeStr);
     }
